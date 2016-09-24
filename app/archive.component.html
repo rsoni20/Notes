@@ -1,0 +1,36 @@
+<h1>Archive</h1>
+
+<div class="row" style="padding-top:20px;">
+    <div class="col-md-3" *ngFor="let note of notes">
+        <div class="well" style="word-wrap: break-word;">
+
+            <div class="row">
+                <div class="col-md-12">
+                    {{note.writing}}
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:50px;">
+                <div class="col-md-12">
+                    <div class="pull-left">
+                        <b class="pull-left" style="font-size:10px;">{{note.date}}</b><br>
+
+                    </div>
+                    <div class="pull-right">
+                        <i [title]="deleteTitle" class="fa fa-trash " aria-hidden="true" (click)="delete(note); $event.stopPropagation()"></i>
+                        <i [title]="ArchiveTitle" class="" (click)="archive(note); $event.stopPropagation()" class="fa fa-archive" aria-hidden="true"></i>
+                    </div>
+
+                </div>
+            </div>
+            <br>
+
+        </div>
+    </div>
+</div>
+
+<div class="row" *ngIf = "showMessage">
+    <div class="col-md-12">
+        <h1>No notes found</h1>
+    </div>
+</div>
