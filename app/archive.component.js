@@ -20,7 +20,7 @@ var ArchiveComponent = (function () {
     ArchiveComponent.prototype.loadData = function () {
         var _this = this;
         this._noteService.getNotes()
-            .then(function (notes) {
+            .subscribe(function (notes) {
             _this.notes = notes.filter(function (n) { return n.archived; });
             _this.showMessage = _this.notes.length == 0;
         });
@@ -28,7 +28,7 @@ var ArchiveComponent = (function () {
     ArchiveComponent.prototype.delete = function (note) {
         var _this = this;
         this._noteService.delete(note.id)
-            .then(function () {
+            .subscribe(function () {
             _this.loadData();
         });
     };
@@ -36,7 +36,7 @@ var ArchiveComponent = (function () {
         var _this = this;
         note.archived = false;
         this._noteService.update(note)
-            .then(function () {
+            .subscribe(function () {
             _this.loadData();
         });
     };

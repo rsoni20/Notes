@@ -15,6 +15,7 @@ var HomeComponent = (function () {
         this._noteService = _noteService;
         this.deleteTitle = "Delete";
         this.ArchiveTitle = "Archive";
+        this.isSelected = false;
     }
     HomeComponent.prototype.ngOnInit = function () {
         this.loadData();
@@ -22,11 +23,10 @@ var HomeComponent = (function () {
     HomeComponent.prototype.loadData = function () {
         var _this = this;
         this._noteService.getNotes()
-            .then(function (notes) {
+            .subscribe(function (notes) {
             _this.notes = notes.filter(function (n) { return !n.archived; });
             _this.showMessage = _this.notes.length == 0;
         });
-        // if(this.notes.length == 0) { }
     };
     HomeComponent.prototype.add = function (writing) {
         var _this = this;
@@ -36,7 +36,7 @@ var HomeComponent = (function () {
             return;
         }
         this._noteService.create(writing)
-            .then(function (note) {
+            .subscribe(function (note) {
             if (!note.archived)
                 _this.notes.push(note);
         });
@@ -44,15 +44,44 @@ var HomeComponent = (function () {
     HomeComponent.prototype.delete = function (note) {
         var _this = this;
         this._noteService.delete(note.id)
-            .then(function () {
+            .subscribe(function () {
             _this.loadData();
         });
+    };
+    HomeComponent.prototype.deleteMultiple = function () {
+        var _this = this;
+        for (var counter = 0; counter < this.notes.length; counter++) {
+            if (this.notes[counter].selected) {
+                this._noteService.delete(this.notes[counter].id)
+                    .subscribe(function () {
+                    _this.loadData();
+                });
+            }
+        }
+    };
+    HomeComponent.prototype.selectAll = function () {
+        this.isSelected = true;
+        for (var counter = 0; counter < this.notes.length; counter++) {
+            if (!this.notes[counter].selected) {
+                this.notes[counter].selected = true;
+            }
+        }
     };
     HomeComponent.prototype.archive = function (note) {
         var _this = this;
         note.archived = true;
         this._noteService.update(note)
-            .then(function () { return _this.loadData(); });
+            .subscribe(function () { return _this.loadData(); });
+    };
+    HomeComponent.prototype.archiveMultiple = function () {
+        var _this = this;
+        for (var counter = 0; counter < this.notes.length; counter++) {
+            if (this.notes[counter].selected) {
+                this.notes[counter].archived = true;
+                this._noteService.update(this.notes[counter])
+                    .subscribe(function () { return _this.loadData(); });
+            }
+        }
     };
     HomeComponent = __decorate([
         core_1.Component({

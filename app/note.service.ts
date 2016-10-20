@@ -1,52 +1,64 @@
 import { Injectable } from '@angular/core';
 import { Note } from './note';
-import { Http, Headers }  from '@angular/http';
+import { Http, Headers, Response }  from '@angular/http';
+import { Observable } from 'rxjs/Rx';
+
+
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/catch';
+
 
 
 @Injectable()
 export class NoteService {
-
+ 
     private _notesUrl = 'app/notes';
     constructor(private _http: Http) { }
 
-    getNotes(): Promise<Note[]> {
+    getNotes(): Observable<Note[]> {
+        console.log("getting notes");
         return this._http.get(this._notesUrl)
-            .toPromise()
-            .then(response => response.json().data as Note[])
-            .catch(this.handleError)
+            .map((response: Response) => response.json().data as Note[])
+            .do(data => console.log("All: " + JSON.stringify(data)))
+            .catch(this._handleEroor);
     }
 
-    private handleError(error: any): Promise<any> {
-        console.error('An error occurred', error); // for demo purposes only
-        return Promise.reject(error.message || error);
+    _handleEroor(error: Response) {
+        console.log(error);
+        return Observable.throw(error);
     }
 
     private headers = new Headers({ 'content-type': 'application/json' });
 
-    create(writing: string): Promise<Note> {
+    create(writing: string): Observable<Note> {
 
         return this._http.post(this._notesUrl, JSON.stringify({ writing: writing, date: new Date(), archived: false }))
-            .toPromise()
-            .then(res => res.json().data)
-            .catch(this.handleError);
+
+            .map(res => res.json().data)
+            .catch(this._handleEroor);
+
+
     }
 
-    update(note: Note): Promise<Note> {
+    update(note: Note): Observable<Note> {
         const url = `${this._notesUrl}/${note.id}`;
 
         return this._http
-            .put(url, JSON.stringify(note), {headers:this.headers})
-            .toPromise()
-            .then(() => note)
-            .catch(this.handleError);
+            .put(url, JSON.stringify(note), { headers: this.headers })
+
+            .map(() => note)
+            .catch(this._handleEroor);
+
     }
-    delete(id: number): Promise<any> {
+    delete(id: number): Observable<any> {
         let url = `${this._notesUrl}/${id}`;
         return this._http.delete(url, { headers: this.headers })
-            .toPromise()
-            .then(() => null)
-            .catch(this.handleError);
+            .map(() => null)
+            .catch(this._handleEroor);
+
+
     }
 
 }

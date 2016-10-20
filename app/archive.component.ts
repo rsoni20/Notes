@@ -26,17 +26,16 @@ export class ArchiveComponent implements OnInit {
 
     loadData() {
         this._noteService.getNotes()
-            .then(notes => {
+            .subscribe(notes => {
                 this.notes = notes.filter(n => n.archived)
                 this.showMessage = this.notes.length == 0;
-
             });
     }
 
 
     delete(note: Note): void {
         this._noteService.delete(note.id)
-            .then(() => {
+            .subscribe(() => {
                 this.loadData();
             });
     }
@@ -44,7 +43,7 @@ export class ArchiveComponent implements OnInit {
     archive(note: Note): void {
         note.archived = false;
         this._noteService.update(note)
-            .then(() => {
+            .subscribe(() => {
                 this.loadData();
             });
 

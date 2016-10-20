@@ -1,52 +1,62 @@
 <h1>home</h1>
 <div class="row" style="text-align:center; padding-top:20px;">
-    <div class="col-md-12">
-        <form class="form-horizontal">
-            <div class="form-group">
-                <div class="col-sm-offset-3 col-sm-6">
-                    <input type="textbox" id="addNote" class="form-control" name="" value="" #noteWriting>
-                </div>
-                <div class="col-sm-3">
-                    <button type="" class="btn btn-default" (click)=" add(noteWriting.value)">Add <i *ngIf="loading"  class="fa fa-spinner" aria-hidden="true"></i></button>
-                </div>
-            </div>
-        </form>
-    </div>
+	<div class="col-md-12">
+		<form class="form-horizontal">
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-6">
+					<input type="textbox" id="addNote" class="form-control" name="" value="" #noteWriting>
+				</div>
+				<div class="col-sm-3">
+					<button type="" class="btn btn-default" (click)=" add(noteWriting.value)">Add <i *ngIf="loading"  class="fa fa-spinner" aria-hidden="true"></i></button>
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
+
+<div class="row" *ngIf=''>
+	<div class="col-md-12">
+		<button class="btn btn-default" (click)="selectAll()">Select All</button>
+		<button class="btn btn-danger" (click)="deleteMultiple(); $event.stopPropagation()">Delete</button>
+		<button class="btn btn-default" (click)="archiveMultiple()">Archive</button>
+	</div>
+</div>
+
 
 
 
 <div class="row" style="padding-top:20px;">
-    <div class="col-md-3" *ngFor="let note of notes">
-        <div class="well" style="word-wrap: break-word;">
+	<div class="col-md-3" *ngFor="let note of notes">
+		<div class="well" style="word-wrap: break-word;">
 
-            <div class="row">
-                <div class="col-md-12">
-                    {{note.writing}}
-                </div>
-            </div>
+			<div class="row">
+				<div class="col-md-12">
+					<input type="checkbox" id="chk" [(ngModel)]="note.selected"> {{note.writing}}
+				</div>
+			</div>
 
-            <div class="row" style="margin-top:50px;">
-                <div class="col-md-12">
-                    <div class="pull-left">
-                        <b class="pull-left" style="font-size:10px;">{{note.date}}</b><br>
+			<div class="row" style="margin-top:50px;">
+				<div class="col-md-12">
+					<div class="pull-left">
+						<b class="pull-left" style="font-size:10px;">{{note.date}}</b><br>
+					</div>
+					<div class="pull-right">
+						<i [title]="deleteTitle" class="fa fa-trash " aria-hidden="true" (click)="delete(note); $event.stopPropagation()"></i>
+						<i [title]="ArchiveTitle" class="" (click)="archive(note); $event.stopPropagation()" class="fa fa-archive" aria-hidden="true"></i>
+					</div>
+				</div>
+			</div>
+			<br>
 
-                    </div>
-                    <div class="pull-right">
-                        <i [title] ="deleteTitle" class="fa fa-trash " aria-hidden="true" (click)="delete(note); $event.stopPropagation()"></i>
-                        <i [title]="ArchiveTitle" class="" (click)="archive(note); $event.stopPropagation()" class="fa fa-archive" aria-hidden="true"></i>
-                    </div>
-
-                </div>
-            </div>
-            <br>
-
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
 
-<div class="row" *ngIf = "showMessage">
-    <div class="col-md-12">
-        <h1>No notes found</h1>
-    </div>
+
+
+
+<div class="row" *ngIf="showMessage">
+	<div class="col-md-12">
+		<h1>No notes found</h1>
+	</div>
 </div>

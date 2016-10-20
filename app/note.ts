@@ -3,4 +3,5 @@ export class Note {
     writing:string;
     date:Date;
     archived:boolean;
+    selected:boolean;
 }

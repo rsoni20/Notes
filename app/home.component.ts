@@ -15,29 +15,27 @@ import { Note } from './note';
   color:white;
 }`]
 })
+
+
 export class HomeComponent implements OnInit {
 
     deleteTitle: string = "Delete";
     ArchiveTitle: string = "Archive";
-   showMessage:boolean;
-
+    showMessage: boolean;
+    isSelected: boolean = false;
     notes: Note[];
     constructor(private _noteService: NoteService) { }
 
     ngOnInit() {
         this.loadData();
-       
     }
-
 
     loadData() {
         this._noteService.getNotes()
-            .then(notes => {
+            .subscribe(notes => {
                 this.notes = notes.filter(n => !n.archived);
                 this.showMessage = this.notes.length == 0;
             });
-            // if(this.notes.length == 0) { }
-            
     }
 
     add(writing: string): void {
@@ -46,28 +44,55 @@ export class HomeComponent implements OnInit {
         if (!writing) { return; }
 
         this._noteService.create(writing)
-            .then(note => {
+            .subscribe(note => {
                 if (!note.archived)
                     this.notes.push(note);
             });
     }
 
+
     delete(note: Note): void {
         this._noteService.delete(note.id)
-            .then(() => {
+            .subscribe(() => {
                 this.loadData();
             });
+    }
+
+    deleteMultiple(): void {
+        for (var counter = 0; counter < this.notes.length; counter++) {
+            if (this.notes[counter].selected) {
+                this._noteService.delete(this.notes[counter].id)
+                    .subscribe(() => {
+                        this.loadData();
+                    });
+            }
+        }
+    }
+
+    selectAll(): void {
+        this.isSelected = true;
+        for (var counter = 0; counter < this.notes.length; counter++) {
+            if (!this.notes[counter].selected) {
+                this.notes[counter].selected = true;
+            }
+        }
     }
 
     archive(note: Note): void {
         note.archived = true;
         this._noteService.update(note)
-            .then(() => this.loadData());
-
+            .subscribe(() => this.loadData());
     }
 
+    archiveMultiple(): void {
+        for (var counter = 0; counter < this.notes.length; counter++) {
+            if (this.notes[counter].selected) {
+                this.notes[counter].archived = true;
+                this._noteService.update(this.notes[counter])
+                    .subscribe(() => this.loadData());
+            }
+        }
 
-
-
+    }
 
 }

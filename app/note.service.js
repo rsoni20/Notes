@@ -10,7 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
+var Rx_1 = require('rxjs/Rx');
 require('rxjs/add/operator/toPromise');
+require('rxjs/add/operator/map');
+require('rxjs/add/operator/do');
+require('rxjs/add/operator/catch');
 var NoteService = (function () {
     function NoteService(_http) {
         this._http = _http;
@@ -18,35 +22,33 @@ var NoteService = (function () {
         this.headers = new http_1.Headers({ 'content-type': 'application/json' });
     }
     NoteService.prototype.getNotes = function () {
+        console.log("getting notes");
         return this._http.get(this._notesUrl)
-            .toPromise()
-            .then(function (response) { return response.json().data; })
-            .catch(this.handleError);
+            .map(function (response) { return response.json().data; })
+            .do(function (data) { return console.log("All: " + JSON.stringify(data)); })
+            .catch(this._handleEroor);
     };
-    NoteService.prototype.handleError = function (error) {
-        console.error('An error occurred', error); // for demo purposes only
-        return Promise.reject(error.message || error);
+    NoteService.prototype._handleEroor = function (error) {
+        console.log(error);
+        return Rx_1.Observable.throw(error);
     };
     NoteService.prototype.create = function (writing) {
         return this._http.post(this._notesUrl, JSON.stringify({ writing: writing, date: new Date(), archived: false }))
-            .toPromise()
-            .then(function (res) { return res.json().data; })
-            .catch(this.handleError);
+            .map(function (res) { return res.json().data; })
+            .catch(this._handleEroor);
     };
     NoteService.prototype.update = function (note) {
         var url = this._notesUrl + "/" + note.id;
         return this._http
             .put(url, JSON.stringify(note), { headers: this.headers })
-            .toPromise()
-            .then(function () { return note; })
-            .catch(this.handleError);
+            .map(function () { return note; })
+            .catch(this._handleEroor);
     };
     NoteService.prototype.delete = function (id) {
         var url = this._notesUrl + "/" + id;
         return this._http.delete(url, { headers: this.headers })
-            .toPromise()
-            .then(function () { return null; })
-            .catch(this.handleError);
+            .map(function () { return null; })
+            .catch(this._handleEroor);
     };
     NoteService = __decorate([
         core_1.Injectable(), 
