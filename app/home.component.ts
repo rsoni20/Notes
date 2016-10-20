@@ -36,6 +36,8 @@ export class HomeComponent implements OnInit {
                 this.notes = notes.filter(n => !n.archived);
                 this.showMessage = this.notes.length == 0;
             });
+
+
     }
 
     add(writing: string): void {
@@ -58,6 +60,16 @@ export class HomeComponent implements OnInit {
             });
     }
 
+    check(note: Note): void {
+
+        if (note.selected = true) {
+            this.isSelected = true;
+        }
+        else if (note.selected = false) {
+            this.isSelected = false;
+        }
+    }
+
     deleteMultiple(): void {
         for (var counter = 0; counter < this.notes.length; counter++) {
             if (this.notes[counter].selected) {
@@ -68,6 +80,8 @@ export class HomeComponent implements OnInit {
             }
         }
     }
+
+
 
     selectAll(): void {
         this.isSelected = true;

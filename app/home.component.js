@@ -48,6 +48,14 @@ var HomeComponent = (function () {
             _this.loadData();
         });
     };
+    HomeComponent.prototype.check = function (note) {
+        if (note.selected = true) {
+            this.isSelected = true;
+        }
+        else if (note.selected = false) {
+            this.isSelected = false;
+        }
+    };
     HomeComponent.prototype.deleteMultiple = function () {
         var _this = this;
         for (var counter = 0; counter < this.notes.length; counter++) {

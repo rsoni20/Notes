@@ -14,7 +14,7 @@
 	</div>
 </div>
 
-<div class="row" *ngIf=''>
+<div class="row" *ngIf='isSelected'>
 	<div class="col-md-12">
 		<button class="btn btn-default" (click)="selectAll()">Select All</button>
 		<button class="btn btn-danger" (click)="deleteMultiple(); $event.stopPropagation()">Delete</button>
@@ -22,16 +22,12 @@
 	</div>
 </div>
 
-
-
-
 <div class="row" style="padding-top:20px;">
 	<div class="col-md-3" *ngFor="let note of notes">
 		<div class="well" style="word-wrap: break-word;">
-
 			<div class="row">
 				<div class="col-md-12">
-					<input type="checkbox" id="chk" [(ngModel)]="note.selected"> {{note.writing}}
+					<input type="checkbox" id="chk" [(ngModel)]="note.selected" (click)="check(note)"> {{note.writing}}
 				</div>
 			</div>
 
@@ -47,13 +43,9 @@
 				</div>
 			</div>
 			<br>
-
 		</div>
 	</div>
 </div>
-
-
-
 
 <div class="row" *ngIf="showMessage">
 	<div class="col-md-12">
