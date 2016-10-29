@@ -15,7 +15,6 @@ var HomeComponent = (function () {
         this._noteService = _noteService;
         this.deleteTitle = "Delete";
         this.ArchiveTitle = "Archive";
-        this.isSelected = false;
     }
     HomeComponent.prototype.ngOnInit = function () {
         this.loadData();
@@ -36,14 +35,13 @@ var HomeComponent = (function () {
             return;
         }
         this._noteService.create(writing)
-            .subscribe(function (note) {
-            if (!note.archived)
-                _this.notes.push(note);
+            .subscribe(function () {
+            _this.loadData();
         });
     };
     HomeComponent.prototype.delete = function (note) {
         var _this = this;
-        this._noteService.delete(note.id)
+        this._noteService.deleteNote(note.id)
             .subscribe(function () {
             _this.loadData();
         });
@@ -58,17 +56,20 @@ var HomeComponent = (function () {
     };
     HomeComponent.prototype.deleteMultiple = function () {
         var _this = this;
+        var deleteFiles = [];
         for (var counter = 0; counter < this.notes.length; counter++) {
             if (this.notes[counter].selected) {
-                this._noteService.delete(this.notes[counter].id)
-                    .subscribe(function () {
-                    _this.loadData();
-                });
+                deleteFiles.push(this.notes[counter].id);
             }
         }
+        console.log(deleteFiles);
+        this._noteService.deleteMultipleNotes(deleteFiles)
+            .subscribe(function () {
+            console.log("Deleting Files");
+            _this.loadData();
+        });
     };
     HomeComponent.prototype.selectAll = function () {
-        this.isSelected = true;
         for (var counter = 0; counter < this.notes.length; counter++) {
             if (!this.notes[counter].selected) {
                 this.notes[counter].selected = true;
@@ -83,13 +84,15 @@ var HomeComponent = (function () {
     };
     HomeComponent.prototype.archiveMultiple = function () {
         var _this = this;
+        var archiveNotes = [];
         for (var counter = 0; counter < this.notes.length; counter++) {
             if (this.notes[counter].selected) {
                 this.notes[counter].archived = true;
-                this._noteService.update(this.notes[counter])
-                    .subscribe(function () { return _this.loadData(); });
+                archiveNotes.push(this.notes[counter]);
             }
         }
+        this._noteService.updateMultipleNotes(archiveNotes)
+            .subscribe(function () { return _this.loadData(); });
     };
     HomeComponent = __decorate([
         core_1.Component({

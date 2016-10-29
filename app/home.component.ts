@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
     deleteTitle: string = "Delete";
     ArchiveTitle: string = "Archive";
     showMessage: boolean;
-    isSelected: boolean = false;
+    isSelected: boolean;
     notes: Note[];
     constructor(private _noteService: NoteService) { }
 
@@ -36,8 +36,6 @@ export class HomeComponent implements OnInit {
                 this.notes = notes.filter(n => !n.archived);
                 this.showMessage = this.notes.length == 0;
             });
-
-
     }
 
     add(writing: string): void {
@@ -45,16 +43,16 @@ export class HomeComponent implements OnInit {
         writing = writing.trim();
         if (!writing) { return; }
 
+
         this._noteService.create(writing)
-            .subscribe(note => {
-                if (!note.archived)
-                    this.notes.push(note);
+            .subscribe(() => {
+                this.loadData();
             });
     }
 
 
     delete(note: Note): void {
-        this._noteService.delete(note.id)
+        this._noteService.deleteNote(note.id)
             .subscribe(() => {
                 this.loadData();
             });
@@ -71,20 +69,22 @@ export class HomeComponent implements OnInit {
     }
 
     deleteMultiple(): void {
+        var deleteFiles: number[] = [];
         for (var counter = 0; counter < this.notes.length; counter++) {
             if (this.notes[counter].selected) {
-                this._noteService.delete(this.notes[counter].id)
-                    .subscribe(() => {
-                        this.loadData();
-                    });
+                deleteFiles.push(this.notes[counter].id);
             }
         }
+        console.log(deleteFiles);
+
+        this._noteService.deleteMultipleNotes(deleteFiles)
+            .subscribe(() => {
+                console.log("Deleting Files");
+                this.loadData()
+            });
     }
 
-
-
     selectAll(): void {
-        this.isSelected = true;
         for (var counter = 0; counter < this.notes.length; counter++) {
             if (!this.notes[counter].selected) {
                 this.notes[counter].selected = true;
@@ -99,14 +99,29 @@ export class HomeComponent implements OnInit {
     }
 
     archiveMultiple(): void {
+
+        var archiveNotes: Note[] = [];
         for (var counter = 0; counter < this.notes.length; counter++) {
             if (this.notes[counter].selected) {
                 this.notes[counter].archived = true;
-                this._noteService.update(this.notes[counter])
-                    .subscribe(() => this.loadData());
+                archiveNotes.push(this.notes[counter])
             }
         }
+        this._noteService.updateMultipleNotes(archiveNotes)
+        .subscribe(()=>this.loadData());
+
 
     }
+
+        // archiveMultiple(): void {
+        //     for (var counter = 0; counter < this.notes.length; counter++) {
+        //         if (this.notes[counter].selected) {
+        //             this.notes[counter].archived = true;
+        //             this._noteService.update(this.notes[counter])
+        //                 .subscribe(() => this.loadData());
+        //         }
+        //     }
+    
+        // }
 
 }

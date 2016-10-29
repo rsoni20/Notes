@@ -27,7 +27,7 @@ var ArchiveComponent = (function () {
     };
     ArchiveComponent.prototype.delete = function (note) {
         var _this = this;
-        this._noteService.delete(note.id)
+        this._noteService.deleteNote(note.id)
             .subscribe(function () {
             _this.loadData();
         });

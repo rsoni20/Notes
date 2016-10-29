@@ -34,7 +34,7 @@ export class ArchiveComponent implements OnInit {
 
 
     delete(note: Note): void {
-        this._noteService.delete(note.id)
+        this._noteService.deleteNote(note.id)
             .subscribe(() => {
                 this.loadData();
             });
@@ -46,7 +46,6 @@ export class ArchiveComponent implements OnInit {
             .subscribe(() => {
                 this.loadData();
             });
-
     }
 
 
